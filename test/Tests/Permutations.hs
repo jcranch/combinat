@@ -124,9 +124,9 @@ testgroup_Permutations = testGroup "Permutations"
   , testProperty "left permutation action is left group action"    prop_mulPermLeft
   , testProperty "right permutation action is right group action"  prop_mulPermRight
 
-  , testProperty "permutation action convetion"        prop_perm
-  , testProperty "left permutation action convention"  prop_permLeft
-  , testProperty "right permutation action convention" prop_permRight
+  , testProperty "permutation action convention"            prop_perm
+  , testProperty "left permutation action convention"       prop_permLeft
+  , testProperty "right permutation action convention"      prop_permRight
   , testProperty "left/right permutation action convention" prop_permLeftRight
 
   , testProperty "cycle left"  prop_cycleLeft
@@ -136,7 +136,7 @@ testgroup_Permutations = testGroup "Permutations"
   , testProperty "inverse is compatible with multiplication" prop_invMul
   , testProperty "sign of permutation is parity of inversions"  prop_sign_inversions
 
-  , testProperty "parity of cyclic permutaiton" prop_cyclSign
+  , testProperty "parity of cyclic permutation" prop_cyclSign
   , testProperty "random permutation is valid"  prop_permIsPerm
   , testProperty "definition of parity"         prop_isEven
 
