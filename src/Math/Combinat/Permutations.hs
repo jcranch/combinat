@@ -335,18 +335,11 @@ inverseTwoLineNotation (Permutation arr) =
   genericTwoLineNotation $ sortBy (comparing snd) $ zip [1..] (_elems arr)
 
 -- | Two-line notation for any set of numbers
-genericTwoLineNotation :: [(Int,Int)] -> ASCII
-genericTwoLineNotation xys = asciiFromLines [ topLine, botLine ] where
-  topLine = "( " ++ intercalate " " us ++ " )"
-  botLine = "( " ++ intercalate " " vs ++ " )"
-  pairs   = [ (show x, show y) | (x,y) <- xys ]
-  (us,vs) = unzip (map f pairs)
-  f (s,t) = (s',t') where
-    a = length s
-    b = length t
-    c = max a b
-    s' = replicate (c-a) ' ' ++ s
-    t' = replicate (c-b) ' ' ++ t
+genericTwoLineNotation :: (Show a, Show b) => [(a,b)] -> ASCII
+genericTwoLineNotation xys = let
+  pairs = ("(","(") : [(show x, show y) | (x,y) <- xys] <> [(")",")")]
+  cols = [vCatWith HRight VSepEmpty (asciiFromString <$> [x,y]) | (x,y) <- pairs]
+  in hCatWith VTop (HSepSpaces 1) cols
 
 --------------------------------------------------------------------------------
 -- * Disjoint cycles
