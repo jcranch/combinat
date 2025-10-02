@@ -10,7 +10,9 @@ module Tests.Permutations where
 import Math.Combinat.Permutations
 
 import Test.Framework
+import Test.Framework.Providers.HUnit
 import Test.Framework.Providers.QuickCheck2
+import Test.HUnit (assertEqual)
 import Test.QuickCheck
 import System.Random
 
@@ -150,6 +152,8 @@ testgroup_Permutations = testGroup "Permutations"
   , testProperty "sortingPermutationAsc"    prop_sortingPermAsc
   , testProperty "sortingPermutationDesc"   prop_sortingPermDesc
   , testProperty "concatPermutations"       prop_concatPerm
+
+  , testTwoLineNotation
   ]
 
 --------------------------------------------------------------------------------
@@ -245,6 +249,12 @@ prop_sortingPermDesc :: [Int] ->  Bool
 prop_sortingPermDesc xs = permuteList (sortingPermutationDesc xs) xs == reverse (sort xs)
 
 prop_concatPerm (PWL p1 xs) (PWL p2 ys) = permuteList p1 xs ++ permuteList p2 ys == permuteList (concatPermutations p1 p2) (xs++ys)
+
+testTwoLineNotation :: Test
+testTwoLineNotation = let
+  p = show . twoLineNotation $ toPermutationUnsafe [3,2,4,5,10,8,7,9,1,6]
+  q = "( 1 2 3 4  5 6 7 8 9 10 )\n( 3 2 4 5 10 8 7 9 1  6 )\n"
+  in testCase "twoLineNotation" $ assertEqual "matches" p q
 
 --------------------------------------------------------------------------------
 
