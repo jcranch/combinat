@@ -20,75 +20,11 @@ import qualified Data.Set as Set
 import Data.List
 import Data.Ord
 
+import Math.Combinat.Helper (safeZip)
+import Math.Combinat.Numbers.HalfInt
 import Math.Combinat.Numbers.Primes
 import Math.Combinat.Sets
 
---------------------------------------------------------------------------------
--- * Half-integers
-
--- | The type of half-integers (internally represented by their double)
---
--- TODO: refactor this into its own module
-newtype HalfInt
-  = HalfInt Int
-  deriving (Eq,Ord)
-
-half :: HalfInt
-half = HalfInt 1
-
-divByTwo :: Int -> HalfInt
-divByTwo = HalfInt
-
-mulByTwo :: HalfInt -> Int
-mulByTwo (HalfInt n) = n
-
-scaleBy :: Int -> HalfInt -> HalfInt
-scaleBy k (HalfInt n) = HalfInt (k*n)
-
-instance Show HalfInt where
-  show (HalfInt n) = case divMod n 2 of
-    (k,0) -> show k
-    (_,1) -> show n ++ "/2"
-
-instance Num HalfInt where
-  fromInteger = HalfInt . (*2) . fromInteger
-  a + b = divByTwo $ mulByTwo a + mulByTwo b
-  a - b = divByTwo $ mulByTwo a - mulByTwo b
-  a * b = case divMod (mulByTwo a * mulByTwo b) 2 of
-            (k,0) -> HalfInt k
-            _     -> error "the result of multiplication is not a half-integer"
-  negate = divByTwo . negate . mulByTwo
-  signum = divByTwo . signum . mulByTwo
-  abs    = divByTwo . abs    . mulByTwo
-
---------------------------------------------------------------------------------
--- * Vectors of half-integers
-
-type HalfVec = [HalfInt]
-
-instance Num HalfVec where
-  fromInteger = error "HalfVec/fromInteger"
-  (+) = safeZip (+)
-  (-) = safeZip (-)
-  (*) = safeZip (*)
-  negate = map negate
-  abs    = map abs
-  signum = map signum
-
-scaleVec :: Int -> HalfVec -> HalfVec
-scaleVec k = map (scaleBy k)
-
-negateVec :: HalfVec -> HalfVec
-negateVec = map negate
-
--- dotProd :: HalfVec -> HalfVec
--- dotProd xs ys = foldl' (+) 0 $ safeZip (*) xs ys
-
-safeZip :: (a -> b -> c) -> [a] -> [b] -> [c]
-safeZip f = go where
-  go (x:xs) (y:ys) = f x y : go xs ys
-  go []     []     = []
-  go _      _      = error "safeZip: the lists do not have equal length"
 
 --------------------------------------------------------------------------------
 -- * Dynkin diagrams

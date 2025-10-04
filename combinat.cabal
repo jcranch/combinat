@@ -41,6 +41,7 @@ Library
   Exposed-Modules:     Math.Combinat
                        Math.Combinat.Classes
                        Math.Combinat.Numbers
+                       Math.Combinat.Numbers.HalfInt
                        Math.Combinat.Numbers.Integers
                        Math.Combinat.Numbers.Sequences
                        Math.Combinat.Numbers.Primes

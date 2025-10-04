@@ -66,6 +66,13 @@ evens [] = []
 odds (x:xs) = evens xs
 odds [] = []
 
+-- | As `zipWith`, but raises an error if the lists have different lengths
+safeZip :: (a -> b -> c) -> [a] -> [b] -> [c]
+safeZip f = go where
+  go (x:xs) (y:ys) = f x y : go xs ys
+  go []     []     = []
+  go _      _      = error "safeZip: the lists do not have equal length"
+
 --------------------------------------------------------------------------------
 -- * multiplication
 
