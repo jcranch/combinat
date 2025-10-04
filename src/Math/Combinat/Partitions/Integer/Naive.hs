@@ -110,7 +110,7 @@ elements (Partition part) = _elements part
 --------------------------------------------------------------------------------
 -- * Pattern synonyms 
 
--- | Pattern sysnonyms allows us to use existing code with minimal modifications
+-- | Pattern synonyms allows us to use existing code with minimal modifications
 pattern Nil :: Partition
 pattern Nil <- (isEmpty -> True) where
         Nil =  empty

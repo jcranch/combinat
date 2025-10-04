@@ -465,9 +465,9 @@ strandLinking braid@(Braid gens) i0 j0
 --------------------------------------------------------------------------------
 -- * Growth
 
--- | Bronfman's recursive formula for the reciprocial of the growth function
+-- | Bronfman's recursive formula for the reciprocal of the growth function
 -- of /positive/ braids. It was already known (by Deligne) that these generating functions
--- are reciprocials of polynomials; Bronfman [1] gave a recursive formula for them.
+-- are reciprocals of polynomials; Bronfman [1] gave a recursive formula for them.
 --
 -- > let count n l = length $ nub $ [ braidNormalForm w | w <- allPositiveBraidWords n l ]
 -- > let convertPoly (1:cs) = zip (map negate cs) [1..]
@@ -490,7 +490,7 @@ bronfmanHsList = list where
   sgn i = if odd i then id else map negate
   choose2 k = div (k*(k-1)) 2
 
--- | Expands the reciprocial of @H(n)@ into an infinite power series,
+-- | Expands the reciprocal of @H(n)@ into an infinite power series,
 -- giving the growth function of the positive braids on @n@ strands.
 expandBronfmanH :: Int -> [Int]
 expandBronfmanH n = pseries' (convertPoly $ bronfmanH n) where

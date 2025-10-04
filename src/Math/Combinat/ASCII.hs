@@ -392,8 +392,8 @@ autoTabulate mtxorder ei list = final where
 caption :: String -> ASCII -> ASCII
 caption = caption' False HLeft
 
--- | Adds a caption to the bottom. The @Bool@ flag specifies whether to add an empty between 
--- the caption and the figure
+-- | Adds a caption to the bottom. The @Bool@ flag specifies whether
+-- to add an empty line between the caption and the figure
 caption' :: Bool -> HAlign -> String -> ASCII -> ASCII
 caption' emptyline halign str rect = vCatWith halign sep [rect,capt] where
   sep  = if emptyline then VSepSpaces 1 else VSepEmpty 

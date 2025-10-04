@@ -59,7 +59,7 @@ choose 0 _  = [[]]
 choose k [] = []
 choose k (x:xs) = map (x:) (choose (k-1) xs) ++ choose k xs  
 
--- | A version of 'choose' which also returns the complementer sets.
+-- | A version of 'choose' which also returns the complementary sets.
 --
 -- > choose k = map fst . choose' k
 --

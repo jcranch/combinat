@@ -32,7 +32,7 @@ import Math.Combinat.Helper
 --------------------------------------------------------------------------------
 -- * the type of plane partitions
 
--- | A plane partition encoded as a tablaeu (the \"Z\" heights are the numbers)
+-- | A plane partition encoded as a tableau (the \"Z\" heights are the numbers)
 newtype PlanePart = PlanePart [[Int]] deriving (Eq,Ord,Show)
 
 fromPlanePart :: PlanePart -> [[Int]]

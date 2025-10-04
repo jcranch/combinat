@@ -324,9 +324,9 @@ asciiDisjointCycles (DisjointCycles cycles) = final where
 twoLineNotation :: Permutation -> ASCII
 twoLineNotation (Permutation arr) = genericTwoLineNotation $ zip [1..] (_elems arr)
 
--- | The inverse two-line notation, where the it\'s the bottom line
--- which is in standard order. The columns of this are a permutation
--- of the columns 'twoLineNotation'.
+-- | The inverse two-line notation, where it\'s the bottom line which
+-- is in standard order. The columns of this are a permutation of the
+-- columns of 'twoLineNotation'.
 --
 -- Remark: the top row of @inverseTwoLineNotation perm@ is the same
 -- as the bottom row of @twoLineNotation (inversePermutation perm)@.
