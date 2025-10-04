@@ -7,7 +7,9 @@
 --
  
 
-{-# LANGUAGE CPP, BangPatterns, ScopedTypeVariables, PatternSynonyms, ViewPatterns #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE ViewPatterns #-}
 module Math.Combinat.Partitions.Integer.Naive where
 
 --------------------------------------------------------------------------------
@@ -46,7 +48,7 @@ toList (Partition xs) = xs
 
 fromList :: [Int] -> Partition 
 fromList = mkPartition where
-  mkPartition xs = Partition $ sortBy (reverseCompare) $ filter (>0) xs
+  mkPartition xs = Partition $ sortBy reverseCompare $ filter (>0) xs
 
 fromListUnsafe :: [Int] -> Partition
 fromListUnsafe = Partition
@@ -145,7 +147,7 @@ toExponentialForm :: Partition -> [(Int,Int)]
 toExponentialForm = _toExponentialForm . toDescList
 
 fromExponentialForm :: [(Int,Int)] -> Partition
-fromExponentialForm = Partition . _fromExponentialForm where
+fromExponentialForm = Partition . _fromExponentialForm
 
 --------------------------------------------------------------------------------
 -- * List-like operations
@@ -203,7 +205,7 @@ isSuperPartitionOf (Partition qs) (Partition ps) = and $ zipWith (<=) ps (qs ++ 
 -- See for example <http://en.wikipedia.org/wiki/Pieri's_formula>
 --
 pieriRule :: Partition -> Int -> [Partition] 
-pieriRule (Partition lambda) n = map Partition (_pieriRule lambda n) where
+pieriRule (Partition lambda) n = map Partition (_pieriRule lambda n)
 
 -- | The dual Pieri rule computes @s[lambda]*e[n]@ as a sum of @s[mu]@-s (each with coefficient 1)
 dualPieriRule :: Partition -> Int -> [Partition] 

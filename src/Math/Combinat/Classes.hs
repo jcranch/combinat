@@ -1,7 +1,7 @@
 
 -- | Type classes for some common properties shared by different objects
 
-{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies #-}
+{-# LANGUAGE FunctionalDependencies #-}
 module Math.Combinat.Classes where
 
 --------------------------------------------------------------------------------

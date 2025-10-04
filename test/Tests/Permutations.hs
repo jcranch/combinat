@@ -2,7 +2,10 @@
 -- | Tests for permutations. 
 --
 
-{-# LANGUAGE CPP, BangPatterns, ScopedTypeVariables, GeneralizedNewtypeDeriving, FlexibleContexts #-}
+{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE FlexibleContexts #-}
 module Tests.Permutations where
 
 --------------------------------------------------------------------------------
@@ -20,6 +23,7 @@ import Control.Monad
 import Control.Monad.ST
 
 import Data.List hiding (permutations)
+import Data.Ord (comparing, Down(..))
 
 import Data.Array (Array)
 import Data.Array.ST
@@ -52,7 +56,7 @@ permInternalSet perm@(Permutation arr) = listArray (1,n) [ Elem (perm !!! i) | i
   n = permutationSize perm
 
 sameSize :: Permutation ->  Permutation -> Bool
-sameSize perm1 perm2 = ( permutationSize perm1 == permutationSize perm2)
+sameSize perm1 perm2 = permutationSize perm1 == permutationSize perm2
 
 newtype CyclicPermutation = Cyclic { fromCyclic :: Permutation } deriving Show
 
@@ -86,7 +90,7 @@ instance Random SameSize where
   randomR _ = random
 
 randomRList :: (RandomGen g, Random a) => Int -> (a, a) -> g -> ([a],g)
-randomRList n ab g0 = go n g0 where
+randomRList n ab = go n where
   go 0   g = ([],g)
   go !k !g = let (x ,g' ) = randomR ab g 
                  (xs,g'') = go (k-1) g'
@@ -159,10 +163,10 @@ testgroup_Permutations = testGroup "Permutations"
 --------------------------------------------------------------------------------
 -- * test properties
           
-prop_disjcyc_1 perm = ( perm == disjointCyclesToPermutation n (permutationToDisjointCycles perm) )
+prop_disjcyc_1 perm = perm == disjointCyclesToPermutation n (permutationToDisjointCycles perm)
   where n = permutationSize perm
 
-prop_disjcyc_2 k dcyc = ( dcyc == permutationToDisjointCycles (disjointCyclesToPermutation n dcyc) )
+prop_disjcyc_2 k dcyc = dcyc == permutationToDisjointCycles (disjointCyclesToPermutation n dcyc)
   where 
     n = fromNat k + m 
     m = case fromDisjointCycles dcyc of
@@ -181,52 +185,52 @@ prop_disjcyc_Mathematica = (permutationToDisjointCycles   perm == disjcyc)
 xperm    = toPermutation  [ 12, 15, 5, 6, 2, 7, 17, 9, 20, 3, 11, 18, 22, 21, 8, 10, 4, 19, 14, 16, 23, 1, 13 ]
 xdisjcyc = DisjointCycles [ [1, 12, 18, 19, 14, 21, 23, 13, 22], [2, 15, 8, 9, 20, 16, 10, 3, 5], [4, 6, 7, 17] ]
 
-prop_randCyclic cycl = ( isCyclicPermutation (fromCyclic cycl) )
+prop_randCyclic cycl = isCyclicPermutation (fromCyclic cycl)
 
-prop_inverse perm = ( perm == inversePermutation (inversePermutation perm) ) 
+prop_inverse perm = perm == inversePermutation (inversePermutation perm)
 
 prop_mulPerm (SameSize perm1 perm2) = 
-    ( permuteArray perm2 (permuteArray perm1 set) == permuteArray (perm1 `multiplyPermutation` perm2) set ) 
+    permuteArray perm2 (permuteArray perm1 set) == permuteArray (perm1 `multiplyPermutation` perm2) set
   where 
     set = naturalSet perm1
 
 prop_mulPermRight (SameSize perm1 perm2) = 
-    ( permuteArrayRight perm2 (permuteArrayRight perm1 set) == permuteArrayRight (perm1 `multiplyPermutation` perm2) set ) 
+    permuteArrayRight perm2 (permuteArrayRight perm1 set) == permuteArrayRight (perm1 `multiplyPermutation` perm2) set
   where 
     set = naturalSet perm1
 
 prop_mulPermLeft (SameSize perm1 perm2) = 
-    ( permuteArrayLeft perm2 (permuteArrayLeft perm1 set) == permuteArrayLeft (perm2 `multiplyPermutation` perm1) set ) 
+    permuteArrayLeft perm2 (permuteArrayLeft perm1 set) == permuteArrayLeft (perm2 `multiplyPermutation` perm1) set
   where 
     set = naturalSet perm1
 
 prop_perm          perm = permuteArray      perm (naturalSet perm) == permInternalSet perm
 prop_permLeft      perm = permuteArrayLeft  perm (permInternalSet perm) == naturalSet perm
 prop_permRight     perm = permuteArrayRight perm (naturalSet perm) == permInternalSet perm
-prop_permLeftRight perm = permuteArrayLeft (inversePermutation perm) (naturalSet perm) == permuteArrayRight (perm) (naturalSet perm) 
+prop_permLeftRight perm = permuteArrayLeft (inversePermutation perm) (naturalSet perm) == permuteArrayRight perm (naturalSet perm) 
 
 prop_cycleLeft  = permuteList (cycleLeft  5) "abcde" == "bcdea"
 prop_cycleRight = permuteList (cycleRight 5) "abcde" == "eabcd"
 
 prop_mulSign (SameSize perm1 perm2) = 
-    ( sgn perm1 * sgn perm2 == sgn (perm1 `multiplyPermutation` perm2) ) 
+    sgn perm1 * sgn perm2 == sgn (perm1 `multiplyPermutation` perm2)
   where 
     sgn = signValue . signOfPermutation :: Permutation -> Int
 
 prop_sign_inversions perm = signOfPermutation perm == paritySign (numberOfInversions perm)
 
 prop_invMul (SameSize perm1 perm2) =   
-  ( inversePermutation perm2 `multiplyPermutation` inversePermutation perm1 == inversePermutation (perm1 `multiplyPermutation` perm2) ) 
+  inversePermutation perm2 `multiplyPermutation` inversePermutation perm1 == inversePermutation (perm1 `multiplyPermutation` perm2)
 
-prop_cyclSign cycl = ( isEvenPermutation perm == odd n ) where
+prop_cyclSign cycl = isEvenPermutation perm == odd n where
   perm = fromCyclic cycl
   n = permutationSize perm
   
-prop_permIsPerm perm = ( isPermutation (fromPermutation perm) ) 
+prop_permIsPerm perm = isPermutation (fromPermutation perm)
 
-prop_isEven perm = ( isEvenPermutation perm == isEvenAlternative perm ) where
+prop_isEven perm = isEvenPermutation perm == isEvenAlternative perm where
   isEvenAlternative p = 
-    even $ sum $ map (\x->x-1) $ map length $ fromDisjointCycles $ permutationToDisjointCycles p
+    even $ sum $ map ((\x->x-1) . length) $ fromDisjointCycles $ permutationToDisjointCycles p
 
 prop_bubbleSort perm = productOfPermutations' n (map (adjacentTransposition n) $ bubbleSort perm) == perm where
   n = permutationSize perm
@@ -240,13 +244,13 @@ prop_number_inversions perm = length (inversions perm) == numberOfInversions per
 
 prop_ninversions_inverse perm = numberOfInversions perm == numberOfInversions (inversePermutation perm)
 
-prop_merge_inversions perm = (numberOfInversionsMerge perm == numberOfInversionsNaive perm)
+prop_merge_inversions perm = numberOfInversionsMerge perm == numberOfInversionsNaive perm
 
 prop_sortingPermAsc :: [Int] -> Bool 
 prop_sortingPermAsc xs = permuteList (sortingPermutationAsc xs) xs == sort xs
 
 prop_sortingPermDesc :: [Int] ->  Bool
-prop_sortingPermDesc xs = permuteList (sortingPermutationDesc xs) xs == reverse (sort xs)
+prop_sortingPermDesc xs = permuteList (sortingPermutationDesc xs) xs == sortBy (comparing Down) xs
 
 prop_concatPerm (PWL p1 xs) (PWL p2 ys) = permuteList p1 xs ++ permuteList p2 ys == permuteList (concatPermutations p1 p2) (xs++ys)
 

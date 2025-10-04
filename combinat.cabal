@@ -83,7 +83,7 @@ Library
                        Math.Combinat.Helper
                        Math.Combinat.TypeLevel
 
-  Default-Extensions:  CPP, BangPatterns
+  Default-Extensions:  BangPatterns
   Other-Extensions:    MultiParamTypeClasses, ScopedTypeVariables,
                        GeneralizedNewtypeDeriving,
                        DataKinds, KindSignatures

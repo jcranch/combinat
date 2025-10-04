@@ -8,7 +8,8 @@
 -- are represented internally. Also now they act on the /right/ by default!
 --
 
-{-# LANGUAGE CPP, BangPatterns, ScopedTypeVariables, GeneralizedNewtypeDeriving, FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 module Math.Combinat.Permutations
   ( -- * The Permutation type
     Permutation (..)
@@ -291,7 +292,7 @@ instance HasWidth Permutation where
 
 -- | Checks whether the permutation is the identity permutation
 isIdentityPermutation :: Permutation -> Bool
-isIdentityPermutation (Permutation ar) = (_elems ar == [1..n]) where
+isIdentityPermutation (Permutation ar) = _elems ar == [1..n] where
   n = _bound ar
 
 -- | Given a permutation of @n@ and a permutation of @m@, we return
@@ -371,7 +372,7 @@ disjointCyclesToPermutation n (DisjointCycles cycles) = Permutation $ fromUArray
   perm = runSTUArray $ do
     ar <- newArray_ (1,n) :: ST s (STUArray s Int Int)
     forM_ [1..n] $ \i -> writeArray ar i i
-    forM_ cycles $ \cyc -> forM_ (pairs cyc) $ \(i,j) -> writeArray ar i j
+    forM_ cycles $ \cyc -> forM_ (pairs cyc) $ uncurry (writeArray ar)
     return ar -- freeze ar
 
 -- | Convert to disjoint cycle notation.
@@ -469,7 +470,7 @@ isCyclicPermutation :: Permutation -> Bool
 isCyclicPermutation perm =
   case cycles of
     []    -> True
-    [cyc] -> (length cyc == n)
+    [cyc] -> length cyc == n
     _     -> False
   where
     n = permutationSize perm
@@ -694,7 +695,7 @@ cycleRight n = Permutation $ fromPermListN n (n : [1..n-1])
 --
 multiplyPermutation :: Permutation -> Permutation -> Permutation
 multiplyPermutation pi1@(Permutation perm1) pi2@(Permutation perm2) =
-  if (n==m)
+  if n == m
     then Permutation $ fromUArray result
     else error "multiplyPermutation: permutations of different sets"
   where
@@ -778,7 +779,7 @@ permuteArrayRight pi@(Permutation perm) ar =
 -- > fromPermutation perm == permuteListRight perm [1..n]
 --
 permuteListRight :: forall a . Permutation -> [a] -> [a]
-permuteListRight perm xs = elems $ permuteArrayRight perm $ arr where
+permuteListRight perm xs = elems $ permuteArrayRight perm arr where
   arr = listArray (1,n) xs :: Array Int a
   n   = permutationSize perm
 
@@ -809,7 +810,7 @@ permuteArrayLeft pi@(Permutation perm) ar =
 -- > fromPermutation (inversePermutation perm) == permuteListLeft perm [1..n]
 --
 permuteListLeft :: forall a. Permutation -> [a] -> [a]
-permuteListLeft perm xs = elems $ permuteArrayLeft perm $ arr where
+permuteListLeft perm xs = elems $ permuteArrayLeft perm arr where
   arr = listArray (1,n) xs :: Array Int a
   n   = permutationSize perm
 
@@ -940,8 +941,8 @@ fasc2B_algorithm_L xs = unfold1 next (sort xs) where
   -- next :: [a] -> Maybe [a]
   next xs = case findj (reverse xs,[]) of
     Nothing -> Nothing
-    Just ( (l:ls) , rs) -> Just $ inc l ls (reverse rs,[])
-    Just ( [] , _ ) -> error "permute: should not happen"
+    Just (l:ls, rs) -> Just $ inc l ls (reverse rs,[])
+    Just ([]  , _ ) -> error "permute: should not happen"
 
   -- we use simple list zippers: (left,right)
   -- findj :: ([a],[a]) -> Maybe ([a],[a])
@@ -952,7 +953,7 @@ fasc2B_algorithm_L xs = unfold1 next (sort xs) where
   findj ( [] , _ ) = Nothing
 
   -- inc :: a -> [a] -> ([a],[a]) -> [a]
-  inc !u us ( (x:xs) , yys ) = if u >= x
+  inc !u us (x:xs, yys) = if u >= x
     then inc u us ( xs , x : yys )
     else reverse (x:us)  ++ reverse (u:yys) ++ xs
   inc _ _ ( [] , _ ) = error "permute: should not happen"

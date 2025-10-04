@@ -57,7 +57,7 @@ instance CanBeEmpty PlanePart where
 -- | Throws an exception if the input is not a plane partition
 toPlanePart :: [[Int]] -> PlanePart
 toPlanePart pps = if isValidPlanePart pps
-  then PlanePart $ filter (not . null) $ map (filter (>0)) $ pps
+  then PlanePart $ filter (not . null) $ map (filter (>0)) pps
   else error "toPlanePart: not a plane partition"
 
 -- | The XY projected shape of a plane partition, as an integer partition
@@ -104,8 +104,8 @@ unsafeStackLayers (bottom:rest) = PlanePart $ foldl addLayer (fromPlanePart $ si
 -- 
 planePartLayers :: PlanePart -> [Partition]
 planePartLayers pp@(PlanePart xs) = [ layer h | h<-[1..planePartZHeight pp] ] where
-  layer h = Partition $ filter (>0) $ map sum' $ (map . map) (f h) xs
-  f h = \k -> if k>=h then 1 else 0
+  layer h = Partition $ filter (>0) $ map (sum' . map (f h)) xs
+  f h k = if k >= h then 1 else 0
 
 --------------------------------------------------------------------------------
 -- * generating plane partitions
