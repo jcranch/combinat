@@ -81,9 +81,6 @@ instance HasHeight Partition where
 instance HasWidth Partition where
   width = partitionWidth
 
-heightWidth :: Partition -> (Int,Int)
-heightWidth part = (height part, width part)
-
 -- | The weight of the partition 
 --   (that is, the sum of the corresponding sequence).
 partitionWeight :: Partition -> Int
