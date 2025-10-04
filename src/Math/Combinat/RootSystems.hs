@@ -29,8 +29,8 @@ import Math.Combinat.Sets
 -- | The type of half-integers (internally represented by their double)
 --
 -- TODO: refactor this into its own module
-newtype HalfInt 
-  = HalfInt Int  
+newtype HalfInt
+  = HalfInt Int
   deriving (Eq,Ord)
 
 half :: HalfInt
@@ -75,7 +75,7 @@ instance Num HalfVec where
   abs    = map abs
   signum = map signum
 
-scaleVec :: Int -> HalfVec -> HalfVec  
+scaleVec :: Int -> HalfVec -> HalfVec
 scaleVec k = map (scaleBy k)
 
 negateVec :: HalfVec -> HalfVec
@@ -120,7 +120,7 @@ ambientDim d = case d of
   G2  -> 3     -- it's a 2 dimensional subspace of 3 dimensions
 
 simpleRootsOf :: Dynkin -> [HalfVec]
-simpleRootsOf d = 
+simpleRootsOf d =
 
   case d of
 
@@ -134,7 +134,7 @@ simpleRootsOf d =
 
     E6  -> simpleRootsE6_123
     E7  -> simpleRootsE7_12
-    E8  -> simpleRootsE8_even 
+    E8  -> simpleRootsE8_even
 
     F4  -> [ [ 1,-1, 0, 0]
            , [ 0, 1,-1, 0]
@@ -196,9 +196,9 @@ basisOfPositives set = Set.toList (Set.difference set set2) where
 --------------------------------------------------------------------------------
 -- * Operations on half-integer vectors
 
--- | bracket b a = (a,b)/(a,a) 
+-- | bracket b a = (a,b)/(a,a)
 bracket :: HalfVec -> HalfVec -> HalfInt
-bracket b a = 
+bracket b a =
   case divMod (2*a_dot_b) a_dot_a of
     (n,0) -> divByTwo n
     _     -> error "bracket: result is not a half-integer"
@@ -228,14 +228,14 @@ printMatrix arr = do
     extendTo n s = replicate (n-length s) ' ' ++ s
 
 --------------------------------------------------------------------------------
--- * Mirroring 
+-- * Mirroring
 
 -- | We mirror stuff until there is no more things happening
 -- (very naive algorithm, but seems to work)
 mirrorClosure :: [HalfVec] -> Set HalfVec
-mirrorClosure = go . Set.fromList where 
-  
-  go set 
+mirrorClosure = go . Set.fromList where
+
+  go set
     | n'  > n   = go set'
     | n'' > n   = go set''
     | otherwise = set
@@ -244,17 +244,17 @@ mirrorClosure = go . Set.fromList where
       n'  = Set.size set'
       n'' = Set.size set''
       set'  = mirrorStep set
-      set'' = Set.union set (Set.map negateVec set) 
+      set'' = Set.union set (Set.map negateVec set)
 
 mirrorStep :: Set HalfVec -> Set HalfVec
 mirrorStep old = Set.union old new where
-  new = Set.fromList [ mirror b a | [a,b] <- choose 2 $ Set.toList old ] 
+  new = Set.fromList [ mirror b a | [a,b] <- choose 2 $ Set.toList old ]
 
 --------------------------------------------------------------------------------
 -- * E6, E7 and E8
 
 -- | This is a basis of E6 as the subset of the even E8 root system
--- where the first three coordinates agree (they are consolidated 
+-- where the first three coordinates agree (they are consolidated
 -- into the first coordinate here)
 simpleRootsE6_123:: [HalfVec]
 simpleRootsE6_123 = roots where
@@ -269,7 +269,7 @@ simpleRootsE6_123 = roots where
     ]
 
 -- | This is a basis of E8 as the subset of the even E8 root system
--- where the first two coordinates agree (they are consolidated 
+-- where the first two coordinates agree (they are consolidated
 -- into the first coordinate here)
 simpleRootsE7_12:: [HalfVec]
 simpleRootsE7_12 = roots where
@@ -293,7 +293,7 @@ simpleRootsE7_diag = roots where
   n = 8
 
   e :: Int -> HalfVec
-  e i = replicate (i-1) 0 ++ [1] ++ replicate (n-i) 0 
+  e i = replicate (i-1) 0 ++ [1] ++ replicate (n-i) 0
 
 simpleRootsE8_even :: [HalfVec]
 simpleRootsE8_even = roots where
@@ -301,7 +301,7 @@ simpleRootsE8_even = roots where
 
   [v1,v2,v3,v4,v5,v6,v7,v8] = roots0
   roots0 = [ e i - e (i+1) | i <-[1..6] ] ++ [ e 6 + e 7 , replicate 8 (-h)  ]
-    
+
   h = half
   n = 8
 
@@ -315,6 +315,6 @@ simpleRootsE8_odd = roots where
   n = 8
 
   e :: Int -> HalfVec
-  e i = replicate (i-1) 0 ++ [1] ++ replicate (n-i) 0 
+  e i = replicate (i-1) 0 ++ [1] ++ replicate (n-i) 0
 
 --------------------------------------------------------------------------------
