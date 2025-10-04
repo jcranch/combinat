@@ -54,9 +54,8 @@ instance Num HalfInt where
   fromInteger = HalfInt . (*2) . fromInteger
   a + b = divByTwo $ mulByTwo a + mulByTwo b
   a - b = divByTwo $ mulByTwo a - mulByTwo b
-  a * b = case divMod (mulByTwo a * mulByTwo b) 4 of
-            (k,0) -> HalfInt (2*k)
-            (k,2) -> HalfInt (2*k+1)
+  a * b = case divMod (mulByTwo a * mulByTwo b) 2 of
+            (k,0) -> HalfInt k
             _     -> error "the result of multiplication is not a half-integer"
   negate = divByTwo . negate . mulByTwo
   signum = divByTwo . signum . mulByTwo
