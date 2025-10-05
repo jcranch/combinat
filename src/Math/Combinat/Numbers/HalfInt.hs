@@ -60,8 +60,13 @@ scaleVec k = map (scaleBy k)
 negateVec :: HalfVec -> HalfVec
 negateVec = map negate
 
--- dotProd :: HalfVec -> HalfVec
--- dotProd xs ys = foldl' (+) 0 $ safeZip (*) xs ys
+dotProd :: HalfVec -> HalfVec -> HalfInt
+dotProd xs ys = let
+  f a b = mulByTwo a * mulByTwo b
+  in case divMod (sum $ safeZip f xs ys) 2 of
+    (n, 0) -> divByTwo n
+    _ -> error "the result of dot product is not a half-integer"
+  
 
 
 

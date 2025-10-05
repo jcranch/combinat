@@ -115,6 +115,7 @@ test-suite combinat-tests
                        Tests.Partitions.Compact
                        Tests.Partitions.Skew
                        Tests.Partitions.Ribbon
+                       Tests.Numbers.HalfInt
                        Tests.Numbers.Primes
                        Tests.Numbers.Sequences
 
