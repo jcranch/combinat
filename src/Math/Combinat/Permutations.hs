@@ -239,31 +239,34 @@ toPermutationUnsafeN n xs = Permutation (fromPermListN n xs)
 uarrayToPermutationUnsafe :: UArray Int Int -> Permutation
 uarrayToPermutationUnsafe = Permutation . fromUArray
 
+-- | Checks whether the input is a permutation of the numbers @[1..n]@
+-- (with length provided, which is assumed to be correct)
+isPermutationN :: Int -> [Int] -> Bool
+isPermutationN n input = runST action where
+  action :: forall s. ST s Bool
+  action = do
+    ar <- newArray (1,n) False :: ST s (STUArray s Int Bool)
+    let go []     = return True
+        go (j:js)
+          | j<1 || j>n = return False
+          | otherwise  = do
+              z <- readArray ar j
+              if z
+                then return False
+                else do
+                  writeArray ar j True
+                  go js
+    go input
+
 -- | Checks whether the input is a permutation of the numbers @[1..n]@.
 isPermutation :: [Int] -> Bool
-isPermutation xs = (ar!0 == 0) && and [ ar!j == 1 | j<-[1..n] ] where
-  n = length xs
-  -- the zero index is an unidiomatic hack
-  ar = (accumArray (+) 0 (0,n) $ map f xs) :: UArray Int Int
-  f :: Int -> (Int,Int)
-  f !j = if j<1 || j>n then (0,1) else (j,1)
+isPermutation xs = isPermutationN (length xs) xs
 
 -- | Checks whether the input is a permutation of the numbers @[1..n]@.
 maybePermutation :: [Int] -> Maybe Permutation
-maybePermutation input = runST action where
-  n = length input
-  action :: forall s. ST s (Maybe Permutation)
-  action = do
-    ar <- newArray (1,n) 0 :: ST s (STUArray s Int Int)
-    let go []     = return $ Just (toPermutationUnsafe input)
-        go (j:js) = if j<1 || j>n
-          then return Nothing
-          else do
-            z <- readArray ar j
-            writeArray ar j (z+1)
-            if z==0 then go js
-                    else return Nothing
-    go input
+maybePermutation xs
+  | isPermutation xs = Just $ toPermutationUnsafe xs
+  | otherwise        = Nothing
 
 -- | Checks the input.
 toPermutation :: [Int] -> Permutation
